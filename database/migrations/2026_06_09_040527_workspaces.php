@@ -12,6 +12,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->text('description')->nullable();
+            $table->string('invite_code')->unique();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Creador del workspace
             $table->timestamps();
         });

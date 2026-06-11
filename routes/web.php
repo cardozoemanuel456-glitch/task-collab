@@ -12,4 +12,8 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
+    Route::get('/prueba', function () {
+    return view('prueba');
+    })->middleware(['auth', 'verified']);
+
 require __DIR__.'/auth.php';
