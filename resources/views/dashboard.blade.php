@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-4">
+    <!-- <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-4">
         <div class="bg-gray-800 p-4 rounded-lg shadow text-white flex flex-col sm:flex-row justify-between items-center gap-4">
             <div>
                 <p class="text-sm font-semibold text-gray-400">Tu código de invitación para tus compañeros:</p>
@@ -23,12 +23,12 @@
                 @endif
             </form>
         </div>
-    </div>
+    </div> -->
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
-            <div class="bg-white p-6 rounded-lg shadow mb-6">
+            <!-- <div class="bg-white p-6 rounded-lg shadow mb-6">
                 <form action="{{ route('tasks.store') }}" method="POST" class="flex gap-4">
                     @csrf
                     <input type="text" name="title" placeholder="¿Qué hay que hacer?" class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
@@ -36,7 +36,7 @@
                         + Añadir Tarjeta
                     </button>
                 </form>
-            </div>
+            </div> -->
             <livewire:task-board />
         </div>
     </div>
