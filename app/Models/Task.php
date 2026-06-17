@@ -2,9 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
 {
-    protected $fillable = ['title', 'user_id', 'team_id', 'status'];
+    use HasFactory;
+
+    protected $fillable = [
+        'title',
+        'priority',
+        'status',
+        'user_id',
+    ];
 }
