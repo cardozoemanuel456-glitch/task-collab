@@ -46,21 +46,4 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    
-    public function workspaces()
-    {
-        return $this->hasMany(Workspace::class);
-    }
-
-    public function boards()
-    {
-        return $this->belongsToMany(Board::class, 'board_user')
-                    ->withPivot('role')
-                    ->withTimestamps();
-    }
-
-    public function assignedTasks()
-    {
-        return $this->hasMany(Task::class, 'assigned_to');
-    }
 }
