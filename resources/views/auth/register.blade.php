@@ -33,13 +33,13 @@
 
                     <div>
                         <label for="name" class="block text-sm font-semibold text-slate-300 mb-1">Nombre Completo</label>
-                        <input id="name" class="block w-full rounded-xl bg-slate-950 border-slate-800 text-slate-100 placeholder-slate-600 focus:border-indigo-500 focus:ring-indigo-500/50 shadow-inner" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" placeholder="Emanuel Cardozo" />
+                        <input id="name" class="block w-full rounded-xl bg-slate-950 border-slate-800 text-slate-100 placeholder-slate-600 focus:border-indigo-500 focus:ring-indigo-500/50 shadow-inner" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" placeholder="Nombre Completo" />
                         <x-input-error :messages="$errors->get('name')" class="mt-1" />
                     </div>
 
                     <div>
                         <label for="email" class="block text-sm font-semibold text-slate-300 mb-1">Correo Electrónico</label>
-                        <input id="email" class="block w-full rounded-xl bg-slate-950 border-slate-800 text-slate-100 placeholder-slate-600 focus:border-indigo-500 focus:ring-indigo-500/50 shadow-inner" type="email" name="email" :value="old('email')" required autocomplete="username" placeholder="tu_usuario@alumnos.tup" />
+                        <input id="email" class="block w-full rounded-xl bg-slate-950 border-slate-800 text-slate-100 placeholder-slate-600 focus:border-indigo-500 focus:ring-indigo-500/50 shadow-inner" type="email" name="email" :value="old('email')" required autocomplete="username" placeholder="tu_correo@gmail.com" />
                         <x-input-error :messages="$errors->get('email')" class="mt-1" />
                     </div>
 

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Creador
             $table->unsignedBigInteger('assigned_to')->nullable();
             $table->foreign('assigned_to')->references('id')->on('users')->onDelete('set null');
-            $table->bigInteger('team_id')->nullable();
+        $table->bigInteger('team_id')->nullable();
             $table->timestamps();
         });
     }
