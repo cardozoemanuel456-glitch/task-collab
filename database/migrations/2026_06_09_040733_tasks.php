@@ -16,12 +16,12 @@ return new class extends Migration
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             
-            // Relaciones 1:N
+         // Relaciones 1:N
             $table->foreignId('board_id')->constrained('boards')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Creador
-            $table->foreignId('assigned_to')->nullable()->constrained('users')->onDelete('set null'); // Encargado
-            $table->bigInteger('team_id')->nullable(); 
-            
+            $table->unsignedBigInteger('assigned_to')->nullable();
+            $table->foreign('assigned_to')->references('id')->on('users')->onDelete('set null');
+            $table->bigInteger('team_id')->nullable();
             $table->timestamps();
         });
     }
