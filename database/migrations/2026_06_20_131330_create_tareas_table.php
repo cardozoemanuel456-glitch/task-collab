@@ -8,26 +8,31 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('tasks', function (Blueprint $table) {
+        Schema::create('tareas', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('status')->default('todo'); // valores: todo, doing, done
+            
+            // Reciclamos tus campos originales de fechas
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             
-         // Relaciones 1:N
-            $table->foreignId('board_id')->constrained('boards')->onDelete('cascade');
+            // NUEVO VÍNCULO: Cada tarea pertenece a una Lista/Página específica de tu menú lateral
+            $table->foreignId('pagina_id')->constrained('paginas')->onDelete('cascade');
+            
+            // Relaciones con usuarios heredadas de tu código
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Creador
             $table->unsignedBigInteger('assigned_to')->nullable();
             $table->foreign('assigned_to')->references('id')->on('users')->onDelete('set null');
-        $table->bigInteger('team_id')->nullable();
+            
+            $table->bigInteger('team_id')->nullable();
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('tasks');
+        Schema::dropIfExists('tareas');
     }
 };
