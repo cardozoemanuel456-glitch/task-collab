@@ -9,18 +9,16 @@ class TaskController extends Controller
 {
     public function store(Request $request)
     {
-        // Validamos el título de la tarea
+        // Validamos el título y que la página destino exista
         $request->validate([
-            'title' => 'required|string|max:255'
+            'title' => 'required|string|max:255',
+            'pagina_id' => 'required|exists:paginas,id'
         ]);
-
-        // Si el usuario está trabajando en el tablero de otro, usamos ese team_id. Si no, su propio ID.
-        $teamId = session('current_team_id', auth()->id());
 
         Task::create([
             'title' => $request->title,
             'user_id' => auth()->id(),
-            'team_id' => $teamId,
+            'pagina_id' => $request->pagina_id, // El nuevo vínculo relacional
             'status' => 'todo'
         ]);
 
@@ -29,7 +27,7 @@ class TaskController extends Controller
 
     public function update(Task $task)
     {
-        // Cambia el estado de forma dinámica
+        // Mantenemos tu lógica dinámica de cambiar el estado
         $newStatus = $task->status === 'todo' ? 'done' : 'todo';
         $task->update(['status' => $newStatus]);
 
@@ -38,11 +36,12 @@ class TaskController extends Controller
 
     public function destroy(Task $task)
     {
-        // REGLA COLABORATIVA: Podés borrar la tarea si la creaste VOS O si pertenece al tablero actual donde estás parado
-        $currentTeamId = session('current_team_id', auth()->id());
+        // REGLA ACTUALIZADA: Podés borrarla si la creaste vos, o si sos el dueño de la página
+        $esCreadorDeTarea = $task->user_id === auth()->id();
+        $esDuenoDePagina = $task->pagina->user_id === auth()->id();
 
-        if ($task->user_id !== auth()->id() && $task->team_id !== $currentTeamId) {
-            abort(403, 'No tenés permisos para eliminar esta tarjeta.');
+        if (!$esCreadorDeTarea && !$esDuenoDePagina) {
+            abort(403, 'No tenés permisos para eliminar esta tarea.');
         }
 
         $task->delete();
