@@ -30,7 +30,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                     </svg>
                 </div>
-                <span class="font-bold text-slate-900 indigo:text-zinc-50 tracking-tight text-base">TaskCollab</span>
+                <span class="font-bold text-slate-900 dark:text-zinc-50 tracking-tight text-xl">TaskCollab</span>
             </div>
             <button onclick="toggleSidebar()" class="md:hidden p-1 rounded-lg text-slate-400 hover:text-red-500 hover:bg-slate-100 dark:hover:bg-zinc-800 cursor-pointer">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -41,7 +41,7 @@
 
         <div class="flex-1 overflow-y-auto p-3 space-y-6">
             <div>
-                <h3 class="px-3 text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-widest mb-2">Mis Tableros</h3>
+                <h3 class="px-3 text-xs font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-widest mb-2">Mis Tableros</h3>
                 <ul class="space-y-0.5">
                     @forelse($paginasPrivadas as $p)
                         <li>
@@ -60,7 +60,7 @@
             </div>
 
             <div>
-                <h3 class="px-3 text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-widest mb-2">Espacios Colaborativos</h3>
+                <h3 class="px-3 text-xs font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-widest mb-2">Espacios Colaborativos</h3>
                 <ul class="space-y-0.5">
                     @forelse($paginasColaborativas as $p)
                         <li>

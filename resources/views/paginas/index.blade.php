@@ -8,7 +8,7 @@
 
     <div class="text-center py-20">
         <span class="text-6xl"></span>
-        <h2 class="text-2xl font-bold mt-4 {{ auth()->user()->dark_mode ? 'text-neutral-100' : 'text-neutral-900' }}">
+        <h2 class="text-5xl font-bold mt-4 {{ auth()->user()->dark_mode ? 'text-neutral-100' : 'text-neutral-900' }}">
             ¡Bienvenido a TaskCollab!
         </h2>
         <p class="{{ auth()->user()->dark_mode ? 'text-neutral-500' : 'text-neutral-400' }} text-sm mt-2 max-w-sm mx-auto">
