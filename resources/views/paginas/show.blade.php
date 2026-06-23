@@ -59,8 +59,7 @@
                     <div id="task-desc-{{ $tarea->id }}" class="hidden">{{ $tarea->description }}</div>
 
                     <div class="flex items-center space-x-3 min-w-0 flex-1">
-                        <form action="{{ route('tareas.update', $tarea->id) }}" method="POST"
-                              class="flex items-center">
+                        <form action="{{ route('tareas.update', $tarea->id) }}" method="POST" class="flex items-center">
                             @csrf
                             @method('PATCH')
                             <input type="checkbox"
@@ -90,9 +89,9 @@
                                     data-id="{{ $tarea->id }}"
                                     data-title="{{ $tarea->title }}"
                                     data-priority="{{ $tarea->priority ?? 'media' }}"
-                                    data-user_id="{{ $tarea->user_id ?? '' }}"
-                                    data-start_date="{{ $tarea->start_date ?? '' }}"
-                                    data-due_date="{{ $tarea->due_date ?? '' }}"
+                                    data-assigned_to="{{ $tarea->assigned_to ?? '' }}"
+                                    data-start_date="{{ $tarea->start_date ? \Carbon\Carbon::parse($tarea->start_date)->format('Y-m-d') : '' }}"
+                                    data-end_date="{{ $tarea->end_date ? \Carbon\Carbon::parse($tarea->end_date)->format('Y-m-d') : '' }}"
                                     class="w-full text-left block px-4 py-2 text-xs hover:bg-teal-600 hover:text-white transition cursor-pointer font-medium">
                                 ✏️ Editar
                             </button>
@@ -135,13 +134,13 @@
 
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider mb-1 {{ $textMuted }}">Nombre de la tarea</label>
-                    <input type="text" name="title" id="input_title" required placeholder="Ej: Resolver la guía de ejercicios prácticos"
+                    <input type="text" name="title" id="input_title" required placeholder="Ej: Resolver la guía de ejercicios"
                            class="w-full {{ $bgInput }} border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-teal-600">
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider mb-1 {{ $textMuted }}">Descripción</label>
-                    <textarea name="description" id="input_description" rows="3" placeholder="Detalles o anotaciones adicionales sobre la tarea..."
+                    <textarea name="description" id="input_description" rows="3" placeholder="Detalles adicionales..."
                               class="w-full {{ $bgInput }} border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-teal-600 resize-none"></textarea>
                 </div>
 
@@ -158,7 +157,7 @@
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider mb-1 {{ $textMuted }}">Asignar a</label>
                         @if(isset($pagina->usuarios) && $pagina->usuarios->count() > 0)
-                            <select name="user_id" id="input_user_id" class="w-full {{ $bgInput }} border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-teal-600 cursor-pointer">
+                            <select name="assigned_to" id="input_assigned_to" class="w-full {{ $bgInput }} border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-teal-600 cursor-pointer">
                                 <option value="">Sin asignar (Libre)</option>
                                 @foreach($pagina->usuarios as $u)
                                     <option value="{{ $u->id }}">{{ $u->name }}</option>
@@ -180,7 +179,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider mb-1 {{ $textMuted }}">Fecha de Fin</label>
-                        <input type="date" name="due_date" id="input_due_date"
+                        <input type="date" name="end_date" id="input_end_date"
                                class="w-full {{ $bgInput }} border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-teal-600 dark:[color-scheme:dark]">
                     </div>
                 </div>
@@ -219,7 +218,7 @@
             form.action = "{{ route('tareas.store') }}";
             form.reset();
 
-            const userSelect = document.getElementById('input_user_id');
+            const userSelect = document.getElementById('input_assigned_to');
             if (userSelect) userSelect.value = '';
 
             const modal = document.getElementById('taskModal');
@@ -237,22 +236,20 @@
             const baseRoute = "{{ route('tareas.update', 'TASK_ID') }}";
             form.action = baseRoute.replace('TASK_ID', taskId);
             
-            // Asignamos el título
-            document.getElementById('input_title').value = button.dataset.title;
+            document.getElementById('input_title').value = button.dataset.title || '';
             
-            // SOLUCIÓN AQUÍ: Leemos la descripción directamente desde el div oculto usando su ID único
             const hiddenDescContainer = document.getElementById(`task-desc-${taskId}`);
-            document.getElementById('input_description').value = hiddenDescContainer ? hiddenDescContainer.textContent : '';
+            document.getElementById('input_description').value = hiddenDescContainer ? hiddenDescContainer.textContent.trim() : '';
             
-            document.getElementById('input_priority').value = button.dataset.priority;
+            document.getElementById('input_priority').value = button.dataset.priority || 'media';
             
-            const userSelect = document.getElementById('input_user_id');
+            const userSelect = document.getElementById('input_assigned_to');
             if (userSelect && !userSelect.disabled) {
-                userSelect.value = button.dataset.user_id;
+                userSelect.value = button.dataset.assigned_to || '';
             }
             
-            document.getElementById('input_start_date').value = button.dataset.start_date;
-            document.getElementById('input_due_date').value = button.dataset.due_date;
+            document.getElementById('input_start_date').value = button.dataset.start_date || '';
+            document.getElementById('input_end_date').value = button.dataset.end_date || '';
             
             document.querySelectorAll('[id^="dropdown-task-"]').forEach(el => el.classList.add('hidden'));
 

@@ -9,34 +9,53 @@ class TaskController extends Controller
 {
     public function store(Request $request)
     {
-        // Validamos el título y que la página destino exista
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'pagina_id' => 'required|exists:paginas,id'
+        // 1. Validamos TODOS los datos que vienen del Modal
+        $data = $request->validate([
+            'pagina_id'   => 'required|exists:paginas,id',
+            'title'       => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'priority'    => 'nullable|string',
+            'assigned_to' => 'nullable|exists:users,id',
+            'start_date'  => 'nullable|date',
+            'end_date'    => 'nullable|date',
         ]);
 
-        Task::create([
-            'title' => $request->title,
-            'user_id' => auth()->id(),
-            'pagina_id' => $request->pagina_id, // El nuevo vínculo relacional
-            'status' => 'todo'
-        ]);
+        // 2. Asignamos los datos automáticos
+        $data['user_id'] = auth()->id(); // El creador de la tarea
+        $data['status'] = 'todo';        // Estado inicial
+
+        // 3. Guardamos en la Base de Datos
+        Task::create($data);
 
         return back();
     }
 
-    public function update(Task $task)
+    public function update(Request $request, Task $task)
     {
-        // Mantenemos tu lógica dinámica de cambiar el estado
-        $newStatus = $task->status === 'todo' ? 'done' : 'todo';
-        $task->update(['status' => $newStatus]);
+        // CASO A: Viene del checkbox de la lista (solo queremos cambiar estado)
+        if (!$request->has('title')) {
+            $newStatus = $task->status === 'todo' ? 'done' : 'todo';
+            $task->update(['status' => $newStatus]);
+            return back();
+        }
+
+        // CASO B: Viene del Modal completo (Editamos todo)
+        $data = $request->validate([
+            'title'       => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'priority'    => 'nullable|string',
+            'assigned_to' => 'nullable|exists:users,id',
+            'start_date'  => 'nullable|date',
+            'end_date'    => 'nullable|date',
+        ]);
+
+        $task->update($data);
 
         return back();
     }
 
     public function destroy(Task $task)
     {
-        // REGLA ACTUALIZADA: Podés borrarla si la creaste vos, o si sos el dueño de la página
         $esCreadorDeTarea = $task->user_id === auth()->id();
         $esDuenoDePagina = $task->pagina->user_id === auth()->id();
 

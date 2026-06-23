@@ -12,6 +12,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->string('title');
             $table->text('description')->nullable();
+            $table->string('priority')->default('media');
             $table->string('status')->default('todo'); // valores: todo, doing, done
             
             // Reciclamos tus campos originales de fechas
