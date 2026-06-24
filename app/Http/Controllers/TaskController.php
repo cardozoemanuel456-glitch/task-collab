@@ -32,9 +32,21 @@ class TaskController extends Controller
 
     public function update(Request $request, Task $task)
     {
-        // CASO A: Viene del checkbox de la lista (solo queremos cambiar estado)
+        // CASO A1: Drag & drop o actualización directa de status (sin título)
+        if ($request->has('status') && !$request->has('title')) {
+            $request->validate([
+                'status' => 'required|string|in:todo,doing,done',
+            ]);
+            $task->update(['status' => $request->status]);
+            
+            return $request->wantsJson() 
+                ? response()->json(['success' => true, 'task' => $task]) 
+                : back();
+        }
+
+        // CASO A2: Viene del checkbox de la lista (solo queremos cambiar estado)
         if (!$request->has('title')) {
-            $newStatus = $task->status === 'todo' ? 'done' : 'todo';
+            $newStatus = $task->status === 'done' ? 'todo' : 'done';
             $task->update(['status' => $newStatus]);
             return back();
         }
@@ -43,6 +55,7 @@ class TaskController extends Controller
         $data = $request->validate([
             'title'       => 'required|string|max:255',
             'description' => 'nullable|string',
+            'status'      => 'nullable|string|in:todo,doing,done',
             'priority'    => 'nullable|string',
             'assigned_to' => 'nullable|exists:users,id',
             'start_date'  => 'nullable|date',

@@ -19,6 +19,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        \Illuminate\Support\Facades\View::composer('paginas.app', function ($view) {
+            if (auth()->check()) {
+                $view->with([
+                    'paginasPrivadas' => auth()->user()->paginas()->whereNull('padre_id')->latest()->get(),
+                    'paginasColaborativas' => auth()->user()->paginasCompartidas()->whereNull('padre_id')->get(),
+                ]);
+            } else {
+                $view->with([
+                    'paginasPrivadas' => collect(),
+                    'paginasColaborativas' => collect(),
+                ]);
+            }
+        });
     }
 }
