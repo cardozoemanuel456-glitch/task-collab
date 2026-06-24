@@ -5,6 +5,7 @@ use App\Http\Controllers\DarkModeController;
 use App\Http\Controllers\PaginaController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\InvitationController;
 
 // 1. RUTA DE INICIO: Redirige al dashboard protegido
 Route::get('/', function () {
@@ -51,3 +52,13 @@ Route::get('/prueba', function () {
 
 // 7. ¡RUTAS DE AUTENTICACIÓN DE BREEZE (Lo que faltaba)!
 require __DIR__.'/auth.php';
+
+// Ruta para aceptar invitación por enlace (público)
+Route::get('/invitar/aceptar/{token}', [InvitationController::class, 'acceptByToken'])
+    ->name('paginas.invitar.accept');
+
+// Ruta para aceptar invitación por código (solo usuarios logueados)
+Route::middleware(['auth'])->group(function () {
+    Route::post('/invitar/aceptar-codigo', [InvitationController::class, 'acceptByCode'])
+        ->name('paginas.invitar.accept.code');
+});
