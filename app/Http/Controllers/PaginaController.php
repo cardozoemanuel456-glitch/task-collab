@@ -52,6 +52,22 @@ class PaginaController extends Controller
         return redirect()->route('paginas.show', $pagina);
     }
 
+    // Actualiza la página (por ejemplo, su título)
+    public function update(Request $request, Pagina $pagina)
+    {
+        if ($pagina->user_id !== auth()->id()) {
+            abort(403, 'Solo el creador puede editar esta página.');
+        }
+
+        $data = $request->validate([
+            'titulo' => 'required|string|max:255',
+        ]);
+
+        $pagina->update($data);
+
+        return redirect()->back();
+    }
+
     // Elimina la página (y en cascada sus subpáginas y tareas gracias a la BD)
     public function destroy(Pagina $pagina)
     {

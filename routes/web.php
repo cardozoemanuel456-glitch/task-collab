@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/paginas', [PaginaController::class, 'index'])->name('paginas.index');
     Route::post('/paginas', [PaginaController::class, 'store'])->name('paginas.store');
     Route::get('/paginas/{pagina}', [PaginaController::class, 'show'])->name('paginas.show');
+    Route::patch('/paginas/{pagina}', [PaginaController::class, 'update'])->name('paginas.update');
     Route::delete('/paginas/{pagina}', [PaginaController::class, 'destroy'])->name('paginas.destroy');
 
     // --- RUTAS DE TAREAS ---
