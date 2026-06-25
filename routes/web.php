@@ -6,15 +6,20 @@ use App\Http\Controllers\PaginaController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
-// 1. RUTA DE INICIO: Redirige al dashboard protegido
+// 1. RUTA RAÍZ PÚBLICA: Muestra la Landing Page de bienvenida
 Route::get('/', function () {
-    return redirect()->route('dashboard');
+    return view('welcome');
 });
 
-// 2. RUTA GENERAL PROTEGIDA (Manejada por PaginaController)
+// 2. PANEL DE CONTROL INTERNO PROTEGIDO (Manejado por PaginaController)
+// Mantenemos '/dashboard' (requerido por Breeze) y '/inicio' como alias por si tenés enlaces viejos que lo usen
 Route::get('/dashboard', [PaginaController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+Route::get('/inicio', [PaginaController::class, 'index'])
+    ->middleware(['auth'])
+    ->name('inicio');
 
 // 3. MÓDULO DE CONFIGURACIÓN (Dark Mode)
 Route::post('/dark-mode/toggle', [DarkModeController::class, 'toggle'])
@@ -49,5 +54,5 @@ Route::get('/prueba', function () {
     return view('prueba');
 })->middleware('auth');
 
-// 7. ¡RUTAS DE AUTENTICACIÓN DE BREEZE (Lo que faltaba)!
+// 7. RUTAS DE AUTENTICACIÓN DE BREEZE
 require __DIR__.'/auth.php';
