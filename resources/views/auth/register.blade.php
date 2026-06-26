@@ -2,10 +2,16 @@
     <div class="min-h-screen flex flex-col md:flex-row bg-slate-950 text-slate-100">
         
         <div class="hidden md:flex md:w-1/2 bg-gradient-to-br from-indigo-900 via-slate-900 to-purple-950 justify-center items-center p-12 border-r border-slate-800">
-            <div class="max-w-md text-center md:text-left">
-                <span class="text-xs font-bold tracking-widest text-indigo-400 uppercase bg-indigo-950/50 px-3 py-1 rounded-full border border-indigo-500/30">
-                    HARD-CODE dev 2026
-                </span>
+           <div class="max-w-md text-center md:text-left">
+           <div class="mb-4 flex justify-center w-full">
+                <img src="{{ asset('images/logo.png') }}" 
+                     alt="Logo TaskCollab" 
+                     class="h-58 w-58 md:h-74 md:w-74 object-contain filter drop-shadow-[0_0_20px_rgba(99,102,241,0.35)]">
+            </div>
+
+            <span class="text-xs font-bold tracking-widest text-indigo-400 uppercase bg-indigo-950/50 px-3 py-1 rounded-full border border-indigo-500/20">
+                HARD-CODE dev 2026
+            </span>
                 <h1 class="text-5xl font-black tracking-tight mt-4 text-white">
                     Task<span class="text-indigo-500">Collab</span>
                 </h1>
