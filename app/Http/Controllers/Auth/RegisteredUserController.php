@@ -48,7 +48,7 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         // --- INICIO DEL CÓDIGO PARA PROCESAR LA INVITACIÓN ---
-        
+
         // 1. Obtener el ID de la invitación de la sesión (guardado por InvitationController)
         $invitacionId = session('invitacion_id');
 
@@ -57,7 +57,7 @@ class RegisteredUserController extends Controller
             $invitation = Invitation::find($invitacionId);
 
             if ($invitation && $invitation->status === 'pending' && $invitation->email === $user->email) {
-                
+
                 // 3. Unir al usuario a la página compartida
                 $user->paginasCompartidas()->attach($invitation->pagina_id, ['role' => 'member']);
 

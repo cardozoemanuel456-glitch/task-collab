@@ -14,16 +14,6 @@
         Invitar
     </button>
 
-    <!-- Ventana Modal (Oculta por defecto) -->
-    <div id="modalInvitar" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full relative">
-            <button onclick="document.getElementById('modalInvitar').classList.add('hidden')"
-                class="absolute top-2 right-2 text-gray-500 hover:text-gray-800">✕</button>
-
-            <!-- Aquí se cargará el componente Livewire -->
-            <livewire:invitar-pagina :pagina-id="$pagina->id" />
-        </div>
-    </div>
 @endsection
 
 
@@ -396,6 +386,14 @@
         </div>
     </div>
 
+    <!-- Ventana Modal de Invitación (movida al root para evitar problemas de z-index) -->
+    <div id="modalInvitar" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-[100] p-4">
+        <div class="w-full max-w-md relative">
+            <!-- Aquí se cargará el componente Livewire -->
+            <livewire:invitar-pagina :pagina-id="$pagina->id" />
+        </div>
+    </div>
+
 @endsection
 
 @push('scripts')
@@ -567,5 +565,12 @@
                 }
             });
         }
+
+        // Listener para cerrar el modal desde Livewire
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('close-modal', () => {
+                document.getElementById('modalInvitar').classList.add('hidden');
+            });
+        });
     </script>
 @endpush

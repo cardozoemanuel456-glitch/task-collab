@@ -13,15 +13,15 @@ class Task extends Model
 
     // Agregamos TODOS los campos para permitir la asignación masiva
     protected $fillable = [
-         'pagina_id', 
-         'title', 
-         'description', 
-         'status', 
-         'priority', 
-         'user_id', 
-         'assigned_to', 
-         'start_date', 
-         'end_date'
+        'pagina_id',
+        'title',
+        'description',
+        'status',
+        'priority',
+        'user_id',
+        'assigned_to',
+        'start_date',
+        'end_date',
     ];
 
     public function pagina()

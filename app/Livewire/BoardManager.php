@@ -2,9 +2,8 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
 use App\Models\Workspace;
-use App\Models\Board;
+use Livewire\Component;
 
 class BoardManager extends Component
 {
@@ -13,6 +12,7 @@ class BoardManager extends Component
 
     // Propiedades para el formulario de creación de un tablero
     public $title;
+
     public $color = '#4f46e5'; // Color por defecto (un violeta/índigo de Tailwind)
 
     // Reglas de validación para el formulario
@@ -58,7 +58,7 @@ class BoardManager extends Component
 
         return view('livewire.board-manager', [
             'workspace' => $workspace,
-            'boards' => $workspace->boards
+            'boards' => $workspace->boards,
         ]);
     }
 }

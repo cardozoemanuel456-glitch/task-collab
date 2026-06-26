@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invitation;
-use App\Models\Pagina;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class InvitationController extends Controller
 {
@@ -15,12 +13,12 @@ class InvitationController extends Controller
     public function acceptByToken($token)
     {
         // Buscar invitación válida
-        $invitation = \App\Models\Invitation::where('token_hash', hash('sha256', $token))
-            ->where('status', 'pending') 
+        $invitation = Invitation::where('token_hash', hash('sha256', $token))
+            ->where('status', 'pending')
             ->where('expires_at', '>', now())
             ->first();
 
-        if (!$invitation) {
+        if (! $invitation) {
             return redirect()->route('paginas.index')
                 ->with('error', 'La invitación no es válida, ya fue usada o ha expirado.');
         }
@@ -37,14 +35,12 @@ class InvitationController extends Controller
 
         $invitation = Invitation::findByCode($request->code);
 
-        if (!$invitation) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Código inválido o expirado.'
-            ], 404);
+        if (! $invitation) {
+            return redirect()->route('dashboard')
+                ->with('error', 'Código inválido o expirado. Verificá el código del correo e intentá nuevamente.');
         }
 
-        return $this->processAcceptance($invitation, true);
+        return $this->processAcceptance($invitation, false);
     }
 
     /**
@@ -55,17 +51,19 @@ class InvitationController extends Controller
         $user = auth()->user();
 
         // 1. Seguridad: Verificar si el usuario está logueado
-        if (!$user) {
+        if (! $user) {
             // Guardamos el ID de la invitación en la sesión
-            session(['invitacion_id' => $invitation->id]); 
+            session(['invitacion_id' => $invitation->id]);
+
             return redirect()->route('login')->with('status', 'Debes iniciar sesión para aceptar la invitación.');
         }
 
         // 2. Verificar si ya es miembro (CORRECCIÓN: Usar paginasCompartidas)
         // Usamos 'paginas.id' porque paginasCompartidas hace un JOIN con la tabla 'paginas'
         if ($user->paginasCompartidas()->where('paginas.id', $invitation->pagina_id)->exists()) {
-            $msg = "Ya eres miembro de esta página.";
-            return $isJson 
+            $msg = 'Ya eres miembro de esta página.';
+
+            return $isJson
                 ? response()->json(['success' => true, 'message' => $msg])
                 : redirect()->route('paginas.show', $invitation->pagina_id)->with('info', $msg);
         }
@@ -83,8 +81,9 @@ class InvitationController extends Controller
         ]);
 
         // 5. Respuesta final
-        $msg = "¡Te has unido a la página con éxito!";
-        return $isJson 
+        $msg = '¡Te has unido a la página con éxito!';
+
+        return $isJson
             ? response()->json(['success' => true, 'message' => $msg])
             : redirect()->route('paginas.show', $invitation->pagina_id)->with('success', $msg);
     }

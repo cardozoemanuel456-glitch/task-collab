@@ -1,6 +1,9 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\ViewComposerServiceProvider;
+
 return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\ViewComposerServiceProvider::class,
+    AppServiceProvider::class,
+    ViewComposerServiceProvider::class,
 ];

@@ -2,14 +2,15 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
 use App\Models\Workspace;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class WorkspaceManager extends Component
 {
     // Variables para el formulario de creación
     public $name;
+
     public $description;
 
     // Variable para el formulario de unirse
@@ -46,15 +47,16 @@ class WorkspaceManager extends Component
         // Buscamos si existe un espacio con ese código aleatorio
         $workspace = Workspace::where('invite_code', strtoupper($this->invite_code))->first();
 
-        if (!$workspace) {
+        if (! $workspace) {
             session()->flash('error', 'El código de invitación no es válido.');
+
             return;
         }
 
         // Verificar si ya pertenece al espacio para no duplicarlo
         // Aquí interactuamos con los tableros del espacio o directamente lo registramos
         // Por ahora, le avisamos que el código es correcto
-        session()->flash('message', '¡Te uniste correctamente a ' . $workspace->name . '!');
+        session()->flash('message', '¡Te uniste correctamente a '.$workspace->name.'!');
         $this->reset('invite_code');
     }
 
@@ -65,7 +67,7 @@ class WorkspaceManager extends Component
         $myWorkspaces = Auth::user()->workspaces;
 
         return view('livewire.workspace-manager', [
-            'workspaces' => $myWorkspaces
+            'workspaces' => $myWorkspaces,
         ]);
     }
 }

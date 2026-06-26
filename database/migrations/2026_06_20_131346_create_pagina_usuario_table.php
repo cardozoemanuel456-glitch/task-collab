@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('pagina_id')->constrained('paginas')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('role')->default('lector'); // admin, editor, lector
-            
+
             $table->unique(['pagina_id', 'user_id']);
             $table->timestamps();
         });

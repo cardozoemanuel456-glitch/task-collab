@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,7 +20,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        \Illuminate\Support\Facades\View::composer('paginas.app', function ($view) {
+        View::composer('paginas.app', function ($view) {
             if (auth()->check()) {
                 $view->with([
                     'paginasPrivadas' => auth()->user()->paginas()->whereNull('padre_id')->latest()->get(),

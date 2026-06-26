@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Notifications;
 
 use App\Models\Task;
@@ -10,6 +11,7 @@ class TaskAssignedNotification extends Notification
     use Queueable;
 
     protected $task;
+
     protected $assignerName;
 
     public function __construct(Task $task, string $assignerName)
@@ -26,6 +28,7 @@ class TaskAssignedNotification extends Notification
     public function toArray($notifiable): array
     {
         $pagina = $this->task->pagina;
+
         return [
             'task_id' => $this->task->id,
             'task_title' => $this->task->title,

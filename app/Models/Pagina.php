@@ -17,7 +17,7 @@ class Pagina extends Model
         'icono',
         'portada_url',
         'user_id',
-        'padre_id'
+        'padre_id',
     ];
 
     // Dueño o creador de la página
@@ -48,7 +48,7 @@ class Pagina extends Model
     public function miembros()
     {
         return $this->belongsToMany(User::class, 'pagina_usuario', 'pagina_id', 'user_id')
-                    ->withPivot('role')
-                    ->withTimestamps();
+            ->withPivot('role')
+            ->withTimestamps();
     }
 }

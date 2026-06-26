@@ -12,10 +12,15 @@ use Livewire\Component;
 class InvitarPagina extends Component
 {
     public $paginaId;
+
     public $email = '';
+
     public $successMessage = '';
+
     public $inviteCode = '';
+
     public $errorMessage = '';
+
     public $isLoading = false;
 
     protected $rules = [
@@ -40,6 +45,13 @@ class InvitarPagina extends Component
             $inviterId = Auth::id();
             $inviterName = Auth::user()->name;
 
+            if (Auth::user()->cannot('invite', $pagina)) {
+                $this->errorMessage = 'Solo el creador puede enviar invitaciones.';
+                $this->isLoading = false;
+
+                return;
+            }
+
             // 3. Verificar duplicados pendientes
             $existing = Invitation::where('pagina_id', $this->paginaId)
                 ->where('email', $this->email)
@@ -48,8 +60,9 @@ class InvitarPagina extends Component
 
             if ($existing) {
                 $this->inviteCode = $existing->code;
-                $this->successMessage = "El usuario ya fue invitado previamente. Código: " . $existing->code;
+                $this->successMessage = 'El usuario ya fue invitado previamente. Código: '.$existing->code;
                 $this->isLoading = false;
+
                 return;
             }
 
@@ -58,9 +71,10 @@ class InvitarPagina extends Component
             $invitation = $result['invitation'];
             $plainToken = $result['token'];
 
-            if (!$result['isNew']) {
-                $this->successMessage = "Invitación ya existente.";
+            if (! $result['isNew']) {
+                $this->successMessage = 'Invitación ya existente.';
                 $this->isLoading = false;
+
                 return;
             }
 
@@ -70,19 +84,19 @@ class InvitarPagina extends Component
             // 6. Enviar correo
             Mail::to($this->email)->send(new PaginaInvitation(
                 $invitation->code,
-                $pagina->nombre,
+                $pagina->titulo,
                 $inviteUrl,
                 $inviterName
             ));
 
             // 7. Éxito
             $this->inviteCode = $invitation->code;
-            $this->successMessage = "¡Invitación enviada exitosamente! Código: " . $invitation->code;
+            $this->successMessage = '¡Invitación enviada exitosamente! Código: '.$invitation->code;
             $this->email = '';
 
         } catch (\Exception $e) {
-            \Log::error("Error en invitación: " . $e->getMessage());
-            $this->errorMessage = "Hubo un error al procesar la invitación. Intente más tarde.";
+            \Log::error('Error en invitación: '.$e->getMessage());
+            $this->errorMessage = 'Hubo un error al procesar la invitación. Intente más tarde.';
         } finally {
             $this->isLoading = false;
         }

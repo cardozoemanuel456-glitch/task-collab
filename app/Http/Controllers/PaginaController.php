@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePaginaRequest;
+use App\Http\Requests\UpdatePaginaRequest;
 use App\Models\Pagina;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class PaginaController extends Controller
 {
@@ -12,7 +14,7 @@ class PaginaController extends Controller
     {
         // Traemos las páginas raíz (sin padre) del usuario actual para el Sidebar
         $paginasPrivadas = auth()->user()->paginas()->whereNull('padre_id')->latest()->get();
-        
+
         // Traemos las páginas compartidas con el usuario
         $paginasColaborativas = auth()->user()->paginasCompartidas()->whereNull('padre_id')->get();
 
@@ -22,9 +24,8 @@ class PaginaController extends Controller
     // Muestra una página específica, sus subpáginas y su gestor de tareas
     public function show(Pagina $pagina)
     {
-        // Validamos seguridad básica: que sea tuya o estés invitado
-        // (Podés ampliar esta lógica después)
-        
+        Gate::authorize('view', $pagina);
+
         // Cargamos las relaciones que necesitamos mostrar en la vista
         $pagina->load('subpaginas', 'tareas', 'miembros');
 
@@ -36,12 +37,9 @@ class PaginaController extends Controller
     }
 
     // Crea una nueva página o subpágina
-    public function store(Request $request)
+    public function store(StorePaginaRequest $request)
     {
-        $data = $request->validate([
-            'titulo' => 'nullable|string|max:255',
-            'padre_id' => 'nullable|exists:paginas,id', // Si viene este dato, es una subpágina
-        ]);
+        $data = $request->validated();
 
         $data['user_id'] = auth()->id();
         $data['titulo'] = $data['titulo'] ?? 'Nueva página';
@@ -53,15 +51,9 @@ class PaginaController extends Controller
     }
 
     // Actualiza la página (por ejemplo, su título)
-    public function update(Request $request, Pagina $pagina)
+    public function update(UpdatePaginaRequest $request, Pagina $pagina)
     {
-        if ($pagina->user_id !== auth()->id()) {
-            abort(403, 'Solo el creador puede editar esta página.');
-        }
-
-        $data = $request->validate([
-            'titulo' => 'required|string|max:255',
-        ]);
+        $data = $request->validated();
 
         $pagina->update($data);
 
@@ -71,9 +63,7 @@ class PaginaController extends Controller
     // Elimina la página (y en cascada sus subpáginas y tareas gracias a la BD)
     public function destroy(Pagina $pagina)
     {
-        if ($pagina->user_id !== auth()->id()) {
-            abort(403, 'Solo el creador puede eliminar esta página.');
-        }
+        Gate::authorize('delete', $pagina);
 
         $pagina->delete();
 

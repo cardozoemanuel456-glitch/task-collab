@@ -2,9 +2,9 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
 use App\Models\Board;
 use App\Models\Task;
+use Livewire\Component;
 
 class KanbanBoard extends Component
 {
@@ -25,15 +25,15 @@ class KanbanBoard extends Component
     {
         // Validamos que el estado sea uno de los tres permitidos
         $allowedStatuses = ['Por Hacer', 'En Proceso', 'Terminado'];
-        
-        if (!in_array($newStatus, $allowedStatuses)) {
+
+        if (! in_array($newStatus, $allowedStatuses)) {
             return;
         }
 
         // Buscamos la tarea y le actualizamos el estado
         $task = Task::where('board_id', $this->boardId)->findOrFail($taskId);
         $task->update([
-            'status' => $newStatus
+            'status' => $newStatus,
         ]);
 
         // Opcional: Mandar una notificación flash discreta

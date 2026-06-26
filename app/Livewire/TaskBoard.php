@@ -2,21 +2,26 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
 use App\Models\Task;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class TaskBoard extends Component
 {
     // Propiedades del Tablero
     public $tableros = [];
+
     public $invitationCode = '';
+
     public $showModal = false;
+
     public $showBoardModal = false;
 
     // Propiedades de los Formularios (wire:model)
     public $newTaskTitle = '';
+
     public $newTaskPriority = 'Baja';
+
     public $newBoardName = '';
 
     // Reglas de validación
@@ -28,15 +33,16 @@ class TaskBoard extends Component
     {
         // Inicialización de datos de ejemplo
         $this->tableros = ['Proyecto Laravel'];
-        $this->invitationCode = 'TK-' . strtoupper(substr(md5(Auth::id() . time()), 0, 6));
+        $this->invitationCode = 'TK-'.strtoupper(substr(md5(Auth::id().time()), 0, 6));
     }
 
     public function render()
     {
         // Trae únicamente las tareas que pertenecen al usuario logueado
         $tasks = Task::where('user_id', Auth::id())->get();
+
         return view('livewire.task-board', [
-            'tasks' => $tasks
+            'tasks' => $tasks,
         ]);
     }
 
@@ -56,7 +62,7 @@ class TaskBoard extends Component
     {
         $this->validate([
             'newTaskTitle' => 'required|min:3',
-            'newTaskPriority' => 'required'
+            'newTaskPriority' => 'required',
         ]);
 
         // Guardado seguro vinculando el user_id del usuario autenticado
@@ -129,4 +135,3 @@ class TaskBoard extends Component
         }
     }
 }
-

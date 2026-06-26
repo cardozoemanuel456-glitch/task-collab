@@ -2,11 +2,11 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
-use App\Models\Task;
 use App\Models\Board;
+use App\Models\Task;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class TaskManager extends Component
 {
@@ -15,9 +15,13 @@ class TaskManager extends Component
 
     // Propiedades mapeadas a los inputs del formulario
     public $title;
+
     public $description;
+
     public $start_date;
+
     public $end_date;
+
     public $assigned_to; // ID del compañero asignado
 
     // Reglas de validación estrictas
@@ -66,12 +70,12 @@ class TaskManager extends Component
         $board = Board::with('members')->findOrFail($this->boardId);
         $members = $board->members;
 
-        // Por si todavía no tienen configurada la lógica de miembros, 
+        // Por si todavía no tienen configurada la lógica de miembros,
         // traemos todos los usuarios como plan de respaldo para las pruebas iniciales
         $assignableUsers = $members->isNotEmpty() ? $members : User::all();
 
         return view('livewire.task-manager', [
-            'users' => $assignableUsers
+            'users' => $assignableUsers,
         ]);
     }
 }

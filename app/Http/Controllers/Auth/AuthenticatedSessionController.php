@@ -38,7 +38,7 @@ class AuthenticatedSessionController extends Controller
 
             if ($invitation && $invitation->status === 'pending') {
                 // CORRECCIÓN: Usar paginasCompartidas y buscar en 'paginas.id'
-                if (!$user->paginasCompartidas()->where('paginas.id', $invitation->pagina_id)->exists()) {
+                if (! $user->paginasCompartidas()->where('paginas.id', $invitation->pagina_id)->exists()) {
 
                     // CORRECCIÓN: Usar paginasCompartidas para attach
                     $user->paginasCompartidas()->attach($invitation->pagina_id, ['role' => 'member']);

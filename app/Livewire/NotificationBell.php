@@ -2,8 +2,8 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class NotificationBell extends Component
 {
@@ -21,26 +21,26 @@ class NotificationBell extends Component
 
     public function checkNew()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return;
         }
 
         $latest = Auth::user()->unreadNotifications()->first();
         if ($latest && $latest->id !== $this->lastNotificationId) {
             $this->lastNotificationId = $latest->id;
-            
+
             // Enviamos un evento al navegador para la notificación nativa
             $this->dispatch('new-notification', [
-                'title' => 'TaskCollab - ' . ($latest->data['sender_name'] ?? 'Notificación'),
-                'body' => ($latest->data['message'] ?? '') . ' "' . ($latest->data['task_title'] ?? '') . '" en ' . ($latest->data['pagina_title'] ?? ''),
-                'url' => $latest->data['pagina_id'] ? route('paginas.show', $latest->data['pagina_id']) : null
+                'title' => 'TaskCollab - '.($latest->data['sender_name'] ?? 'Notificación'),
+                'body' => ($latest->data['message'] ?? '').' "'.($latest->data['task_title'] ?? '').'" en '.($latest->data['pagina_title'] ?? ''),
+                'url' => $latest->data['pagina_id'] ? route('paginas.show', $latest->data['pagina_id']) : null,
             ]);
         }
     }
 
     public function markAsRead($id)
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return;
         }
 
@@ -52,7 +52,7 @@ class NotificationBell extends Component
 
     public function markAllAsRead()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return;
         }
 
@@ -61,7 +61,7 @@ class NotificationBell extends Component
 
     public function clearAll()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return;
         }
 

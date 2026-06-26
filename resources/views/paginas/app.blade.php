@@ -8,7 +8,7 @@
     $bgInput = $isDark ? 'bg-[#18181b] border-zinc-800 text-zinc-100' : 'bg-slate-50 border-slate-200 text-slate-900';
     $textTitle = $isDark ? 'text-zinc-50 font-semibold' : 'text-slate-900 font-semibold';
     $hoverSidebar = $isDark ? 'hover:bg-zinc-800/60 text-zinc-200' : 'hover:bg-slate-100 text-slate-900';
-    $activeSidebar = $isDark ? 'bg-indigo-600/15 text-indigo-400 font-medium border-l-2 border-indigo-500' : 'bg-indigo-50 text-indigo-700 font-semibold border-l-2 border-indigo-600';
+    $activeSidebar = $isDark ? 'bg-indigo-500/10 text-indigo-400 font-semibold border-indigo-500/50 shadow-[0_0_15px_rgba(99,102,241,0.15)]' : 'bg-indigo-50 text-indigo-700 font-bold border-indigo-300 shadow-sm';
     $borderMuted = $isDark ? 'border-zinc-800/60' : 'border-slate-200/80';
 @endphp
 <!DOCTYPE html>
@@ -101,7 +101,7 @@
                 <ul class="space-y-0.5 mb-6">
                     <li>
                         <a href="{{ route('dashboard') }}"
-                            class="flex items-center space-x-2.5 px-3 py-2 rounded-xl {{ $hoverSidebar }} text-sm transition-all {{ request()->routeIs('dashboard') ? $activeSidebar : '' }}">
+                            class="flex items-center space-x-2.5 px-3 py-2 rounded-xl border border-transparent {{ $hoverSidebar }} text-sm transition-all {{ request()->routeIs('dashboard') ? $activeSidebar : '' }}">
                             <svg class="w-4 h-4 shrink-0 opacity-70" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -119,7 +119,7 @@
                     @forelse($paginasPrivadas as $p)
                         <li class="group relative">
                             <a href="{{ route('paginas.show', $p->id) }}"
-                                class="flex items-center space-x-2.5 px-3 py-2 rounded-xl {{ $hoverSidebar }} text-sm transition-all {{ isset($pagina) && $pagina->id == $p->id ? $activeSidebar : '' }}">
+                                class="flex items-center space-x-2.5 px-3 py-2 rounded-xl border border-transparent {{ $hoverSidebar }} text-sm transition-all {{ isset($pagina) && $pagina->id == $p->id ? $activeSidebar : '' }}">
                                 <svg class="w-4 h-4 shrink-0 opacity-70" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -180,7 +180,7 @@
                     @forelse($paginasColaborativas as $p)
                         <li>
                             <a href="{{ route('paginas.show', $p->id) }}"
-                                class="flex items-center space-x-2.5 px-3 py-2 rounded-xl {{ $hoverSidebar }} text-sm transition-all {{ isset($pagina) && $pagina->id == $p->id ? $activeSidebar : '' }}">
+                                class="flex items-center space-x-2.5 px-3 py-2 rounded-xl border border-transparent {{ $hoverSidebar }} text-sm transition-all {{ isset($pagina) && $pagina->id == $p->id ? $activeSidebar : '' }}">
                                 <svg class="w-4 h-4 shrink-0 opacity-70" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round"

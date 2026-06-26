@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 
 class Invitation extends Model
@@ -64,6 +63,7 @@ class Invitation extends Model
     public static function findByToken($plainToken)
     {
         $hashed = hash('sha256', $plainToken);
+
         return static::where('token_hash', $hashed)
             ->where('status', 'pending')
             ->where('expires_at', '>', now())

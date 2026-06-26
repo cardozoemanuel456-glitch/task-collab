@@ -13,8 +13,11 @@ class PaginaInvitation extends Mailable
     use Queueable, SerializesModels;
 
     public $inviteCode;
+
     public $paginaName;
+
     public $inviteUrl;
+
     public $inviterName;
 
     public function __construct($inviteCode, $paginaName, $inviteUrl, $inviterName)
@@ -28,7 +31,7 @@ class PaginaInvitation extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Invitación a: ' . $this->paginaName,
+            subject: 'Invitación a: '.$this->paginaName,
         );
     }
 
