@@ -20,6 +20,7 @@ $borderMuted = $isDark ? 'border-zinc-800/60' : 'border-slate-200/80';
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'TaskCollab')</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>[x-cloak] { display: none !important; }</style>
 </head>
 
 <body class="{{ $bgBody }} font-sans min-h-screen flex transition-colors duration-200">
@@ -156,6 +157,9 @@ $borderMuted = $isDark ? 'border-zinc-800/60' : 'border-slate-200/80';
 
             <div class="flex items-center space-x-2.5">
                 @yield('header-actions')
+
+                {{-- Campana de notificaciones --}}
+                <livewire:notification-bell />
 
                 <form action="{{ route('dark-mode.toggle') }}" method="POST" class="inline m-0 p-0">
                     @csrf
@@ -444,6 +448,59 @@ $borderMuted = $isDark ? 'border-zinc-800/60' : 'border-slate-200/80';
     </div>
 
     @stack('scripts')
+
+    {{-- Native Web Notifications --}}
+    <script>
+        // Solicitar permiso de notificaciones al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                // Pedimos permiso de forma sutil después de un breve retraso
+                setTimeout(() => {
+                    Notification.requestPermission();
+                }, 3000);
+            }
+        });
+
+        // Escuchar evento de Livewire para lanzar notificación nativa
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('new-notification', (params) => {
+                const data = Array.isArray(params) ? params[0] : params;
+                
+                // Sonido sutil de notificación (opcional: usa un beep del sistema)
+                try {
+                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.frequency.value = 800;
+                    gain.gain.value = 0.08;
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.15);
+                } catch(e) {}
+
+                // Notificación nativa del navegador
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    const notif = new Notification(data.title || 'TaskCollab', {
+                        body: data.body || 'Tienes una nueva notificación',
+                        icon: '/favicon.ico',
+                        tag: 'taskcollab-' + Date.now(),
+                        silent: true
+                    });
+
+                    notif.onclick = function() {
+                        window.focus();
+                        if (data.url) {
+                            window.location.href = data.url;
+                        }
+                        notif.close();
+                    };
+
+                    setTimeout(() => notif.close(), 6000);
+                }
+            });
+        });
+    </script>
 
 </body>
 
