@@ -5,15 +5,27 @@
 @section('breadcrumb', 'Espacio / ' . ($pagina->titulo ?? ''))
 
 @section('header-actions')
-    <button onclick="alert('Módulo de invitación en desarrollo')"
-            class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition cursor-pointer
-             flex items-center space-x-1.5 shadow-sm shadow-indigo-600/10">
-        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+    <!-- Botón "Invitar" actualizado -->
+    <button onclick="document.getElementById('modalInvitar').classList.remove('hidden')"
+        class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
         </svg>
-        <span>Invitar</span>
+        Invitar
     </button>
+
+    <!-- Ventana Modal (Oculta por defecto) -->
+    <div id="modalInvitar" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full relative">
+            <button onclick="document.getElementById('modalInvitar').classList.add('hidden')"
+                class="absolute top-2 right-2 text-gray-500 hover:text-gray-800">✕</button>
+
+            <!-- Aquí se cargará el componente Livewire -->
+            <livewire:invitar-pagina :pagina-id="$pagina->id" />
+        </div>
+    </div>
 @endsection
+
 
 @section('content')
 
