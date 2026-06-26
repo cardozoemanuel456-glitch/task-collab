@@ -32,7 +32,7 @@ $borderMuted = $isDark ? 'border-zinc-800/60' : 'border-slate-200/80';
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                     </svg>
                 </div>
-                <span class="font-bold text-slate-900 dark:text-zinc-50 tracking-tight text-xl">TaskCollab</span>
+                <span class="font-bold text-indigo-600 dark:text-indigo-400 tracking-tight text-xl">TaskCollab</span>
             </a>
             <button onclick="toggleSidebar()" class="md:hidden p-1 rounded-lg text-slate-400 hover:text-red-500 hover:bg-slate-100 dark:hover:bg-zinc-800 cursor-pointer">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -237,6 +237,7 @@ $borderMuted = $isDark ? 'border-zinc-800/60' : 'border-slate-200/80';
 
                 if (window.innerWidth >= 768) {
                     mainContent.classList.add('md:pl-64');
+                    mainContent.style.paddingLeft = sidebar.style.width || '';
                 } else {
                     overlay.classList.remove('hidden');
                 }
@@ -247,11 +248,32 @@ $borderMuted = $isDark ? 'border-zinc-800/60' : 'border-slate-200/80';
 
                 if (window.innerWidth >= 768) {
                     mainContent.classList.remove('md:pl-64');
+                    mainContent.style.paddingLeft = '0px';
                 } else {
                     overlay.classList.add('hidden');
                 }
             }
         }
+
+        window.addEventListener('resize', () => {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const isHidden = sidebar.getBoundingClientRect().left < 0;
+
+            if (window.innerWidth < 768) {
+                mainContent.style.paddingLeft = '0px';
+            } else {
+                if (isHidden) {
+                    mainContent.style.paddingLeft = '0px';
+                    mainContent.classList.remove('md:pl-64');
+                } else {
+                    mainContent.style.paddingLeft = sidebar.style.width || '';
+                    if (!sidebar.style.width) {
+                        mainContent.classList.add('md:pl-64');
+                    }
+                }
+            }
+        });
         // ── Resize sidebar ──────────────────────────────────────
         (function() {
             const sidebar = document.getElementById('sidebar');
