@@ -14,12 +14,15 @@ class InvitationController extends Controller
      */
     public function acceptByToken($token)
     {
-        // Buscar invitación válida por token
-        $invitation = Invitation::findByToken($token);
+        // Buscar invitación válida
+        $invitation = \App\Models\Invitation::where('token_hash', hash('sha256', $token))
+            ->where('status', 'pending') 
+            ->where('expires_at', '>', now())
+            ->first();
 
         if (!$invitation) {
             return redirect()->route('paginas.index')
-                ->with('error', 'La invitación es inválida, ya fue usada o ha expirado.');
+                ->with('error', 'La invitación no es válida, ya fue usada o ha expirado.');
         }
 
         return $this->processAcceptance($invitation, false);
@@ -49,43 +52,40 @@ class InvitationController extends Controller
      */
     private function processAcceptance($invitation, $isJson = false)
     {
-        $user = Auth::user();
+        $user = auth()->user();
 
-        // 1. Verificar si el usuario ya es miembro de esta página
-        $paginasIds = $user->paginas()->get()->pluck('id')->toArray();
-
-        if (in_array($invitation->pagina_id, $paginasIds)) {
-            $message = 'Ya eres miembro de esta página.';
-
-            if ($isJson) {
-                return response()->json(['success' => true, 'message' => $message]);
-            }
-
-            return redirect()->route('paginas.show', $invitation->pagina_id)
-                ->with('info', $message);
+        // 1. Seguridad: Verificar si el usuario está logueado
+        if (!$user) {
+            // Guardamos el ID de la invitación en la sesión
+            session(['invitacion_id' => $invitation->id]); 
+            return redirect()->route('login')->with('status', 'Debes iniciar sesión para aceptar la invitación.');
         }
 
-        // 2. Unir usuario a la página (Relación Many-to-Many en tabla 'pagina_usuario')
-        // Asegúrate de que tu modelo User tenga el método 'paginas()' definido
-        $user->paginas()->attach($invitation->pagina_id);
+        // 2. Verificar si ya es miembro (CORRECCIÓN: Usar paginasCompartidas)
+        // Usamos 'paginas.id' porque paginasCompartidas hace un JOIN con la tabla 'paginas'
+        if ($user->paginasCompartidas()->where('paginas.id', $invitation->pagina_id)->exists()) {
+            $msg = "Ya eres miembro de esta página.";
+            return $isJson 
+                ? response()->json(['success' => true, 'message' => $msg])
+                : redirect()->route('paginas.show', $invitation->pagina_id)->with('info', $msg);
+        }
 
-        // 3. Marcar la invitación como aceptada en la base de datos
+        // 3. Unir usuario a la página (CORRECCIÓN: Usar paginasCompartidas)
+        // Asegúrate de pasar el rol si tu tabla pivote lo requiere (ej. 'member', 'editor', etc.)
+        // Si no defines un rol por defecto, Laravel usará NULL (si la columna lo permite)
+        $user->paginasCompartidas()->attach($invitation->pagina_id, ['role' => 'member']);
+
+        // 4. Actualizar estado de la invitación
         $invitation->update([
             'status' => 'accepted',
             'accepted_at' => now(),
             'accepted_by_user_id' => $user->id,
         ]);
 
-        // 4. Retornar respuesta
-        if ($isJson) {
-            return response()->json([
-                'success' => true,
-                'message' => '¡Te has unido a la página con éxito!',
-                'redirect_url' => route('paginas.show', $invitation->pagina_id)
-            ]);
-        }
-
-        return redirect()->route('paginas.show', $invitation->pagina_id)
-            ->with('success', '¡Te has unido a la página exitosamente!');
+        // 5. Respuesta final
+        $msg = "¡Te has unido a la página con éxito!";
+        return $isJson 
+            ? response()->json(['success' => true, 'message' => $msg])
+            : redirect()->route('paginas.show', $invitation->pagina_id)->with('success', $msg);
     }
 }
