@@ -12,8 +12,13 @@
             ¡Bienvenido a TaskCollab!
         </h2>
         <p class="{{ auth()->user()->dark_mode ? 'text-neutral-500' : 'text-neutral-400' }} text-sm mt-2 max-w-sm mx-auto">
-            Seleccioná un tablero de trabajo en la barra lateral o creá uno nuevo abajo para empezar a organizar tus actividades académicas.
+            Seleccioná un espacio de trabajo en la barra lateral o creá uno nuevo para empezar a organizar tus actividades.
         </p>
+        {{-- Logo debajo del mensaje --}}
+        <div class="flex justify-center mt-8 pointer-events-none select-none">
+            <img src="{{ asset('logo-tc.png') }}" alt=""
+                class="logo-tc-dashboard {{ auth()->user()->dark_mode ? 'logo-tc-dashboard-dark' : 'logo-tc-dashboard-light' }}">
+        </div>
     </div>
 
 @endsection
