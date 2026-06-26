@@ -24,7 +24,10 @@ class InvitarPagina extends Component
 
     public function send()
     {
-        $this->validate();
+        // 1. Validación estricta (RFC y DNS)
+        $this->validate([
+            'email' => 'required|email:rfc,dns',
+        ]);
 
         $this->isLoading = true;
         $this->successMessage = '';
@@ -32,50 +35,56 @@ class InvitarPagina extends Component
         $this->inviteCode = '';
 
         try {
+            // 2. Verificar que la página existe
             $pagina = Pagina::findOrFail($this->paginaId);
             $inviterId = Auth::id();
             $inviterName = Auth::user()->name;
 
-            // 1. Crear invitación
+            // 3. Verificar duplicados pendientes
+            $existing = Invitation::where('pagina_id', $this->paginaId)
+                ->where('email', $this->email)
+                ->where('status', 'pending')
+                ->first();
+
+            if ($existing) {
+                $this->inviteCode = $existing->code;
+                $this->successMessage = "El usuario ya fue invitado previamente. Código: " . $existing->code;
+                $this->isLoading = false;
+                return;
+            }
+
+            // 4. Crear invitación
             $result = Invitation::createInvitation($this->paginaId, $inviterId, $this->email);
             $invitation = $result['invitation'];
             $plainToken = $result['token'];
 
             if (!$result['isNew']) {
-                $this->inviteCode = $invitation->code;
-                $this->successMessage = "El usuario ya fue invitado previamente. Código: " . $invitation->code;
+                $this->successMessage = "Invitación ya existente.";
                 $this->isLoading = false;
                 return;
             }
 
-            // 2. Generar URL
+            // 5. Generar URL
             $inviteUrl = route('paginas.invitar.accept', $plainToken);
 
-            // 3. Enviar correo
+            // 6. Enviar correo
             Mail::to($this->email)->send(new PaginaInvitation(
                 $invitation->code,
-                $pagina->nombre, // Asegúrate que tu modelo Pagina tenga 'nombre'
+                $pagina->nombre,
                 $inviteUrl,
                 $inviterName
             ));
 
-            // 4. Mostrar éxito
+            // 7. Éxito
             $this->inviteCode = $invitation->code;
-            $this->successMessage = "¡Invitación enviada! Código: " . $invitation->code;
+            $this->successMessage = "¡Invitación enviada exitosamente! Código: " . $invitation->code;
             $this->email = '';
 
         } catch (\Exception $e) {
-
-            \Log::error("Error detallado: " . $e->getMessage());
-            $this->errorMessage = "Error al enviar: " . $e->getMessage(); // Mostrar error en pantalla
-            
+            \Log::error("Error en invitación: " . $e->getMessage());
+            $this->errorMessage = "Hubo un error al procesar la invitación. Intente más tarde.";
         } finally {
             $this->isLoading = false;
         }
-    }
-
-    public function render()
-    {
-        return view('livewire.invitar-pagina');
     }
 }
